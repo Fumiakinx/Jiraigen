@@ -7,39 +7,48 @@
 }
 
 body {
-  background-color: #1E1E1E;
+  background-color: #121316;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   color: #F1F5F9;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   min-height: 100vh;
-  padding: 16px;
-}
-
-/* メインコンテナ */
-.game-panel {
-  background-color: #252830;
-  border: 1px solid #3A3F4D;
-  border-radius: 12px;
-  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.45);
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 16px;
+  align-items: center;
+  padding: 16px 20px;
+  gap: 16px;
 }
 
-/* アプリヘッダー */
-.app-header {
+/* トップナビゲーションバー */
+.top-nav {
+  width: 100%;
+  max-width: 1100px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #333842;
+  padding: 4px 4px 12px 4px;
+  border-bottom: 1px solid #242934;
 }
 
-.brand {
+.nav-portal-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #94A3B8;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 14px;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease;
+}
+
+.nav-portal-btn:hover {
+  background: rgba(56, 189, 248, 0.1);
+  border-color: #38BDF8;
+  color: #38BDF8;
+}
+
+.nav-brand {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -51,10 +60,40 @@ body {
 }
 
 .brand-title {
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 800;
   letter-spacing: 1px;
   color: #F8FAFC;
+}
+
+/* メイン2カラムレイアウト */
+.main-layout {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 24px;
+  width: 100%;
+  max-width: 1100px;
+}
+
+/* 画面幅が狭い場合は縦並び */
+@media (max-width: 820px) {
+  .main-layout {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+/* 左側：ゲームメインパネル */
+.game-panel {
+  background-color: #1A1D24;
+  border: 1px solid #2B303C;
+  border-radius: 16px;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.45);
+  display: inline-flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
 }
 
 /* 難易度タブ */
@@ -64,19 +103,19 @@ body {
 }
 
 .tab-btn {
-  background-color: #1E222B;
-  border: 1px solid #3A3F4D;
+  background-color: #14171E;
+  border: 1px solid #2D3340;
   border-radius: 6px;
   color: #94A3B8;
   font-size: 12px;
   font-weight: 600;
-  padding: 4px 10px;
+  padding: 6px 12px;
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .tab-btn:hover {
-  border-color: #64748B;
+  border-color: #4A5568;
   color: #F8FAFC;
 }
 
@@ -88,13 +127,13 @@ body {
 
 /* 連勝ステータスバー */
 .streak-bar {
-  background-color: #1E222B;
-  border: 1px solid #333842;
+  background-color: #14171E;
+  border: 1px solid #2D3340;
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 6px 12px;
+  padding: 8px 12px;
 }
 
 .streak-group {
@@ -133,8 +172,8 @@ body {
 
 /* ゲーム操作ヘッダー */
 .status-header {
-  background-color: #1E222B;
-  border: 1px solid #333842;
+  background-color: #14171E;
+  border: 1px solid #2D3340;
   border-radius: 8px;
   display: flex;
   justify-content: space-between;
@@ -205,8 +244,8 @@ body {
 
 /* 盤面エリア */
 .board-wrapper {
-  background-color: #1E222B;
-  border: 1px solid #333842;
+  background-color: #14171E;
+  border: 1px solid #2D3340;
   border-radius: 8px;
   display: flex;
   justify-content: center;
@@ -300,148 +339,213 @@ body {
   100% { transform: scale(1); }
 }
 
-/* プレイヤー設定 & ポータルリンクバー */
-.footer-controls {
+/* ==========================================
+   🏆 右側：ランキングサイドバー
+   ========================================== */
+.sidebar-ranking {
+  width: 320px;
+  flex-shrink: 0;
+  background-color: #1A1D24;
+  border: 1px solid #2B303C;
+  border-radius: 16px;
+  padding: 16px;
   display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.45);
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: center;
-  background-color: #1E222B;
-  border: 1px solid #333842;
-  border-radius: 8px;
-  padding: 8px 12px;
-  gap: 12px;
 }
 
-.player-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.player-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: #94A3B8;
-}
-
-.player-input {
-  background-color: #111318;
-  border: 1px solid #3A3F4D;
-  border-radius: 6px;
+.sidebar-title {
+  font-size: 15px;
+  font-weight: 800;
   color: #F8FAFC;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 8px;
-  width: 110px;
-  outline: none;
-  transition: border-color 0.2s ease;
+  letter-spacing: 0.5px;
 }
 
-.player-input:focus {
-  border-color: #38BDF8;
-}
-
-.save-status {
-  font-size: 10px;
-  color: #10B981;
-  font-weight: 600;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.save-status.active {
-  opacity: 1;
-}
-
-.back-portal-link {
-  color: #94A3B8;
-  font-size: 12px;
-  font-weight: 600;
-  text-decoration: none;
-  padding: 4px 8px;
-  border-radius: 6px;
-  transition: all 0.2s ease;
-}
-
-.back-portal-link:hover {
-  color: #38BDF8;
-  background-color: rgba(56, 189, 248, 0.08);
-}
-
-/* 連勝ランキングパネル */
-.leaderboard-panel {
-  background-color: #1E222B;
-  border: 1px solid #333842;
-  border-radius: 8px;
-  padding: 10px 14px;
+/* 👤 プレイヤー設定カード */
+.sidebar-profile-card {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.leaderboard-header {
+.profile-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.leaderboard-title {
-  font-size: 12px;
+.profile-label {
+  font-size: 11px;
   font-weight: 700;
-  color: #F8FAFC;
+  color: #38BDF8;
   letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.save-indicator {
+  font-size: 10px;
+  color: #10B981;
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.save-indicator.active {
+  opacity: 1;
+}
+
+.player-input {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #F8FAFC;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 10px;
+  outline: none;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.player-input:focus {
+  border-color: #38BDF8;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.25);
+}
+
+.profile-desc {
+  font-size: 10px;
+  color: #64748B;
+  line-height: 1.4;
+}
+
+/* 順位表コントロールヘッダー */
+.ranking-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2px;
+}
+
+.ranking-sub-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #E2E8F0;
+}
+
+.ranking-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.diff-select {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  color: #F8FAFC;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 8px;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.diff-select:focus {
+  border-color: #38BDF8;
+}
+
+.diff-select option {
+  background-color: #1A1D24;
+  color: #F8FAFC;
 }
 
 .btn-refresh {
   background: transparent;
-  border: 1px solid #3A3F4D;
-  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
   color: #94A3B8;
   cursor: pointer;
-  font-size: 11px;
-  padding: 2px 8px;
+  font-size: 12px;
+  padding: 4px 8px;
   transition: all 0.15s ease;
 }
 
 .btn-refresh:hover {
-  border-color: #64748B;
   color: #F8FAFC;
+  border-color: #38BDF8;
 }
 
-.leaderboard-table {
+/* ランキングテーブル */
+.ranking-table-wrap {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  overflow-y: auto;
+  max-height: 380px;
+}
+
+.ranking-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 12px;
+  text-align: left;
 }
 
-.leaderboard-table th {
+.ranking-table th {
+  position: sticky;
+  top: 0;
+  background: #14171E;
   color: #64748B;
   font-size: 10px;
   font-weight: 700;
-  padding: 4px 6px;
-  text-align: left;
+  text-transform: uppercase;
+  padding: 8px 10px;
   border-bottom: 1px solid #2B303C;
 }
 
-.leaderboard-table td {
-  padding: 6px;
-  border-bottom: 1px solid #222630;
+.ranking-table td {
+  padding: 9px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
   color: #E2E8F0;
 }
 
-.rank-1 { color: #F59E0B; font-weight: 800; }
-.rank-2 { color: #94A3B8; font-weight: 800; }
-.rank-3 { color: #D97706; font-weight: 800; }
+.rank-1 {
+  color: #FFD700;
+  font-weight: 800;
+  text-shadow: 0 0 6px rgba(255, 215, 0, 0.25);
+}
+
+.rank-2 {
+  color: #E2E8F0;
+  font-weight: 800;
+}
+
+.rank-3 {
+  color: #F59E0B;
+  font-weight: 800;
+}
 
 .streak-col {
   text-align: right;
-  font-weight: 700;
+  font-weight: 800;
   color: #38BDF8;
 }
 
-.empty-cell,
-.loading-cell {
+.loading-cell,
+.empty-cell {
   text-align: center;
   color: #64748B;
-  padding: 16px 0;
+  padding: 28px 0;
 }

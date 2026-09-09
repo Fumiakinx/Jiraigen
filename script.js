@@ -9,7 +9,7 @@ const STORAGE_KEY = 'minesweeper_streaks_v1';
 const PLAYER_NAME_KEY = 'jigsaw_player_name';
 const RANKING_API_URL = "https://script.google.com/macros/s/AKfycbzIgOMcU1d9kMOfeDjmZmDFcoW8k1LIK0yZbNSCmokaFdb7JyMwa6mHKxxfkVlgaOEt/exec";
 
-const ICON_MINE = '⚠️';
+const ICON_MINE = '💣';
 const ICON_MARKER = '◆';
 
 // ゲームステート
@@ -65,7 +65,7 @@ const btnResetStreak = document.getElementById('btn-reset-streak');
 const playerNameInput = document.getElementById('player-name-input');
 const saveStatusEl = document.getElementById('save-status');
 const rankingTbody = document.getElementById('ranking-tbody');
-const rankingLevelName = document.getElementById('ranking-level-name');
+const sidebarDiffSelect = document.getElementById('sidebar-diff-select');
 const btnRefreshRanking = document.getElementById('btn-refresh-ranking');
 const btnBackPortal = document.getElementById('btn-back-portal');
 
@@ -140,7 +140,14 @@ function initPlayerProfile() {
 
   if (btnRefreshRanking) {
     btnRefreshRanking.addEventListener('click', () => {
-      loadLeaderboard(currentDifficulty);
+      const targetDiff = sidebarDiffSelect ? sidebarDiffSelect.value : currentDifficulty;
+      loadLeaderboard(targetDiff);
+    });
+  }
+
+  if (sidebarDiffSelect) {
+    sidebarDiffSelect.addEventListener('change', (e) => {
+      loadLeaderboard(e.target.value);
     });
   }
 }
@@ -148,9 +155,6 @@ function initPlayerProfile() {
 async function loadLeaderboard(diffKey) {
   if (!rankingTbody) return;
   const levelName = DIFFICULTIES[diffKey].name;
-  if (rankingLevelName) {
-    rankingLevelName.textContent = levelName;
-  }
 
   rankingTbody.innerHTML = '<tr><td colspan="3" class="loading-cell">読み込み中...</td></tr>';
 
@@ -166,7 +170,7 @@ async function loadLeaderboard(diffKey) {
         const rankClass = idx === 0 ? 'rank-1' : (idx === 1 ? 'rank-2' : (idx === 2 ? 'rank-3' : ''));
         tr.innerHTML = `
           <td class="${rankClass}">${idx + 1}位</td>
-          <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px;">${escapeHtml(row.name)}</td>
+          <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 130px;">${escapeHtml(row.name)}</td>
           <td class="streak-col">${row.streak} 連勝</td>
         `;
         rankingTbody.appendChild(tr);
@@ -195,7 +199,8 @@ async function submitStreakRanking(streak, diffKey) {
 
   try {
     await fetch(sendUrl);
-    await loadLeaderboard(diffKey);
+    const activeViewDiff = sidebarDiffSelect ? sidebarDiffSelect.value : diffKey;
+    await loadLeaderboard(activeViewDiff);
   } catch (e) {
     console.error("ランキング送信エラー:", e);
   }
@@ -235,6 +240,10 @@ function initGame(diffKey) {
 
   updateDisplayNumbers();
   updateStreakDisplay();
+
+  if (sidebarDiffSelect) {
+    sidebarDiffSelect.value = currentDifficulty;
+  }
   loadLeaderboard(currentDifficulty);
 
   // ボード要素のグリッドスタイル適用
@@ -559,7 +568,7 @@ difficultyBtns.forEach(btn => {
 // 連勝リセットボタン
 btnResetStreak.addEventListener('click', () => {
   if (confirm(`現在の難易度 (${DIFFICULTIES[currentDifficulty].name}) の連勝記録をリセットしますか？`)) {
-    streaks[currentDifficulty].current = 0;
+    streaks[currentDifficulty] = { current: 0, best: 0 };
     saveStreaks(streaks);
     updateStreakDisplay();
   }

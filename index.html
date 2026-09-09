@@ -7,87 +7,108 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="game-panel">
-    <!-- アプリヘッダー -->
-    <header class="app-header">
-      <div class="brand">
-        <span class="brand-badge">◆</span>
-        <span class="brand-title">じらいげん</span>
-      </div>
+  <!-- ナビゲーションバー -->
+  <nav class="top-nav">
+    <a href="https://fumiakinx.github.io/" id="btn-back-portal" class="nav-portal-btn">‹ PORTAL TOP</a>
+    <div class="nav-brand">
+      <span class="brand-badge">💣</span>
+      <span class="brand-title">じらいげん</span>
+    </div>
+  </nav>
+
+  <div class="main-layout">
+    <!-- 左側: ゲームパネル -->
+    <div class="game-panel">
+      <!-- 難易度タブ -->
       <div class="difficulty-tabs">
         <button type="button" class="tab-btn active" data-difficulty="beginner">初級</button>
         <button type="button" class="tab-btn" data-difficulty="intermediate">中級</button>
         <button type="button" class="tab-btn" data-difficulty="expert">上級</button>
       </div>
-    </header>
 
-    <!-- 連勝ステータスバー -->
-    <div class="streak-bar">
-      <div class="streak-group">
-        <span class="streak-label">現在連勝</span>
-        <span class="streak-value" id="current-streak">0</span>
+      <!-- 連勝ステータスバー -->
+      <div class="streak-bar">
+        <div class="streak-group">
+          <span class="streak-label">現在連勝</span>
+          <span class="streak-value" id="current-streak">0</span>
+        </div>
+        <div class="streak-group">
+          <span class="streak-label">最高連勝</span>
+          <span class="streak-value" id="best-streak">0</span>
+        </div>
+        <button type="button" class="streak-reset-btn" id="btn-reset-streak" title="連勝記録をリセット">リセット</button>
       </div>
-      <div class="streak-group">
-        <span class="streak-label">最高連勝</span>
-        <span class="streak-value" id="best-streak">0</span>
+
+      <!-- ゲーム操作ヘッダー -->
+      <div class="status-header">
+        <div class="counter-box">
+          <span class="counter-label">REMAIN</span>
+          <span class="counter-value" id="mine-count">010</span>
+        </div>
+
+        <button type="button" class="status-button" id="face-btn" aria-label="ゲーム状態・リセット">
+          <span class="status-dot"></span>
+          <span class="status-text" id="status-text">READY</span>
+        </button>
+
+        <div class="counter-box">
+          <span class="counter-label">TIME</span>
+          <span class="counter-value" id="timer">000</span>
+        </div>
       </div>
-      <button type="button" class="streak-reset-btn" id="btn-reset-streak" title="連勝記録をリセット">リセット</button>
+
+      <!-- 盤面エリア -->
+      <div class="board-wrapper">
+        <div class="board" id="board"></div>
+      </div>
     </div>
 
-    <!-- ゲーム操作ヘッダー -->
-    <div class="status-header">
-      <div class="counter-box">
-        <span class="counter-label">REMAIN</span>
-        <span class="counter-value" id="mine-count">010</span>
+    <!-- 右側: ランキングサイドバー -->
+    <aside id="sidebar-ranking" class="sidebar-ranking">
+      <div class="sidebar-header">
+        <span class="sidebar-title">🏆 連勝ランキング</span>
       </div>
 
-      <button type="button" class="status-button" id="face-btn" aria-label="ゲーム状態・リセット">
-        <span class="status-dot"></span>
-        <span class="status-text" id="status-text">READY</span>
-      </button>
-
-      <div class="counter-box">
-        <span class="counter-label">TIME</span>
-        <span class="counter-value" id="timer">000</span>
+      <!-- 👤 プレイヤー設定カード -->
+      <div class="sidebar-profile-card">
+        <div class="profile-header">
+          <span class="profile-label">👤 プレイヤー設定</span>
+          <span id="save-status" class="save-indicator">✓ 保存完了</span>
+        </div>
+        <input type="text" id="player-name-input" class="player-input" placeholder="名前を入力してください" maxlength="10">
+        <span class="profile-desc">設定した名前は、すべてのゲームとオンラインランキングで自動共有されます。</span>
       </div>
-    </div>
 
-    <!-- 盤面エリア -->
-    <div class="board-wrapper">
-      <div class="board" id="board"></div>
-    </div>
-
-    <!-- プレイヤー設定 & ポータルリンク -->
-    <div class="footer-controls">
-      <div class="player-group">
-        <label for="player-name-input" class="player-label">プレイヤー名</label>
-        <input type="text" id="player-name-input" class="player-input" placeholder="ゲスト" maxlength="10">
-        <span id="save-status" class="save-status">✓ 保存済</span>
+      <!-- 順位表エリア -->
+      <div class="ranking-controls">
+        <span class="ranking-sub-title">順位表 (TOP10)</span>
+        <div class="ranking-actions">
+          <select id="sidebar-diff-select" class="diff-select" aria-label="難易度選択">
+            <option value="beginner">初級</option>
+            <option value="intermediate">中級</option>
+            <option value="expert">上級</option>
+          </select>
+          <button type="button" id="btn-refresh-ranking" class="btn-refresh" title="更新">↻</button>
+        </div>
       </div>
-      <a href="https://fumiakinx.github.io/" id="btn-back-portal" class="back-portal-link">← ポータルへ</a>
-    </div>
 
-    <!-- 連勝ランキングパネル -->
-    <div class="leaderboard-panel">
-      <div class="leaderboard-header">
-        <span class="leaderboard-title">🏆 連勝ランキング (<span id="ranking-level-name">初級</span>)</span>
-        <button type="button" class="btn-refresh" id="btn-refresh-ranking" title="ランキングを更新">↻ 更新</button>
+      <div class="ranking-table-wrap">
+        <table class="ranking-table">
+          <thead>
+            <tr>
+              <th style="width: 50px;">順位</th>
+              <th>プレイヤー</th>
+              <th style="width: 70px; text-align: right;">連勝数</th>
+            </tr>
+          </thead>
+          <tbody id="ranking-tbody">
+            <tr>
+              <td colspan="3" class="loading-cell">読み込み中...</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-      <table class="leaderboard-table">
-        <thead>
-          <tr>
-            <th style="width: 50px;">順位</th>
-            <th>プレイヤー</th>
-            <th style="text-align: right; width: 80px;">連勝数</th>
-          </tr>
-        </thead>
-        <tbody id="ranking-tbody">
-          <tr>
-            <td colspan="3" class="loading-cell">読み込み中...</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    </aside>
   </div>
 
   <script src="script.js"></script>
