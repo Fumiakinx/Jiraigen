@@ -6,6 +6,9 @@ const DIFFICULTIES = {
 };
 
 const STORAGE_KEY = 'minesweeper_streaks_v1';
+const PLAYER_NAME_KEY = 'jigsaw_player_name';
+const RANKING_API_URL = "https://script.google.com/macros/s/AKfycbzIgOMcU1d9kMOfeDjmZmDFcoW8k1LIK0yZbNSCmokaFdb7JyMwa6mHKxxfkVlgaOEt/exec";
+
 const ICON_MINE = '⚠️';
 const ICON_MARKER = '◆';
 
@@ -21,7 +24,7 @@ let timerId = null;
 let flagsCount = 0;
 let revealedCount = 0;
 
-// 連勝データの読み込み・保存
+// 連勝データの読み込み・保存 (ローカル)
 function loadStreaks() {
   try {
     const data = localStorage.getItem(STORAGE_KEY);
@@ -58,6 +61,13 @@ const currentStreakEl = document.getElementById('current-streak');
 const bestStreakEl = document.getElementById('best-streak');
 const difficultyBtns = document.querySelectorAll('.tab-btn[data-difficulty]');
 const btnResetStreak = document.getElementById('btn-reset-streak');
+
+const playerNameInput = document.getElementById('player-name-input');
+const saveStatusEl = document.getElementById('save-status');
+const rankingTbody = document.getElementById('ranking-tbody');
+const rankingLevelName = document.getElementById('ranking-level-name');
+const btnRefreshRanking = document.getElementById('btn-refresh-ranking');
+const btnBackPortal = document.getElementById('btn-back-portal');
 
 // ステータス表示更新
 function setStatus(state, label) {
@@ -105,6 +115,106 @@ function stopTimer() {
   }
 }
 
+// ==========================================
+// 🏆 ランキング通信 & プロフィール同期
+// ==========================================
+
+function initPlayerProfile() {
+  const savedName = localStorage.getItem(PLAYER_NAME_KEY) || 'ゲスト';
+  if (playerNameInput) {
+    playerNameInput.value = savedName;
+    playerNameInput.addEventListener('input', () => {
+      const val = playerNameInput.value.trim();
+      localStorage.setItem(PLAYER_NAME_KEY, val);
+      if (saveStatusEl) {
+        saveStatusEl.classList.add('active');
+        setTimeout(() => { saveStatusEl.classList.remove('active'); }, 1000);
+      }
+    });
+  }
+
+  if (btnBackPortal) {
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    btnBackPortal.href = isLocal ? "../FumiPortal/index.html" : "https://fumiakinx.github.io/";
+  }
+
+  if (btnRefreshRanking) {
+    btnRefreshRanking.addEventListener('click', () => {
+      loadLeaderboard(currentDifficulty);
+    });
+  }
+}
+
+async function loadLeaderboard(diffKey) {
+  if (!rankingTbody) return;
+  const levelName = DIFFICULTIES[diffKey].name;
+  if (rankingLevelName) {
+    rankingLevelName.textContent = levelName;
+  }
+
+  rankingTbody.innerHTML = '<tr><td colspan="3" class="loading-cell">読み込み中...</td></tr>';
+
+  try {
+    const url = `${RANKING_API_URL}?action=get_jiraigen_ranking&level=${encodeURIComponent(levelName)}&t=${Date.now()}`;
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data && data.records && data.records.length > 0) {
+      rankingTbody.innerHTML = '';
+      data.records.slice(0, 10).forEach((row, idx) => {
+        const tr = document.createElement('tr');
+        const rankClass = idx === 0 ? 'rank-1' : (idx === 1 ? 'rank-2' : (idx === 2 ? 'rank-3' : ''));
+        tr.innerHTML = `
+          <td class="${rankClass}">${idx + 1}位</td>
+          <td style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 140px;">${escapeHtml(row.name)}</td>
+          <td class="streak-col">${row.streak} 連勝</td>
+        `;
+        rankingTbody.appendChild(tr);
+      });
+    } else {
+      rankingTbody.innerHTML = '<tr><td colspan="3" class="empty-cell">まだ連勝記録がありません</td></tr>';
+    }
+  } catch (e) {
+    console.warn("ランキング取得エラー (ローカル記録フォールバック):", e);
+    const pName = (playerNameInput ? playerNameInput.value.trim() : '') || 'あなた';
+    const localBest = streaks[diffKey] ? streaks[diffKey].best : 0;
+    rankingTbody.innerHTML = `
+      <tr>
+        <td class="rank-1">1位</td>
+        <td>${escapeHtml(pName)}</td>
+        <td class="streak-col">${localBest} 連勝</td>
+      </tr>
+    `;
+  }
+}
+
+async function submitStreakRanking(streak, diffKey) {
+  const levelName = DIFFICULTIES[diffKey].name;
+  const playerName = (playerNameInput ? playerNameInput.value.trim() : '') || 'ゲスト';
+  const sendUrl = `${RANKING_API_URL}?action=add_jiraigen_streak&name=${encodeURIComponent(playerName)}&streak=${streak}&level=${encodeURIComponent(levelName)}&t=${Date.now()}`;
+
+  try {
+    await fetch(sendUrl);
+    await loadLeaderboard(diffKey);
+  } catch (e) {
+    console.error("ランキング送信エラー:", e);
+  }
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+// ==========================================
+// 🎮 ゲーム制御ロジック
+// ==========================================
+
 // ゲーム初期化
 function initGame(diffKey) {
   stopTimer();
@@ -125,6 +235,7 @@ function initGame(diffKey) {
 
   updateDisplayNumbers();
   updateStreakDisplay();
+  loadLeaderboard(currentDifficulty);
 
   // ボード要素のグリッドスタイル適用
   boardEl.style.gridTemplateColumns = `repeat(${cols}, 24px)`;
@@ -335,6 +446,7 @@ function checkWinCondition() {
     flagsCount = totalMines;
     updateDisplayNumbers();
 
+    // 連勝記録更新 (ローカル)
     const diffStreak = streaks[currentDifficulty];
     diffStreak.current++;
     if (diffStreak.current > diffStreak.best) {
@@ -342,6 +454,9 @@ function checkWinCondition() {
     }
     saveStreaks(streaks);
     updateStreakDisplay();
+
+    // 🏆 GASへ連勝スコア送信
+    submitStreakRanking(diffStreak.current, currentDifficulty);
   }
 }
 
@@ -444,11 +559,12 @@ difficultyBtns.forEach(btn => {
 // 連勝リセットボタン
 btnResetStreak.addEventListener('click', () => {
   if (confirm(`現在の難易度 (${DIFFICULTIES[currentDifficulty].name}) の連勝記録をリセットしますか？`)) {
-    streaks[currentDifficulty] = { current: 0, best: 0 };
+    streaks[currentDifficulty].current = 0;
     saveStreaks(streaks);
     updateStreakDisplay();
   }
 });
 
-// 初期起動
+// 初期化実行
+initPlayerProfile();
 initGame('beginner');

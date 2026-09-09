@@ -56,6 +56,38 @@
     <div class="board-wrapper">
       <div class="board" id="board"></div>
     </div>
+
+    <!-- プレイヤー設定 & ポータルリンク -->
+    <div class="footer-controls">
+      <div class="player-group">
+        <label for="player-name-input" class="player-label">プレイヤー名</label>
+        <input type="text" id="player-name-input" class="player-input" placeholder="ゲスト" maxlength="10">
+        <span id="save-status" class="save-status">✓ 保存済</span>
+      </div>
+      <a href="https://fumiakinx.github.io/" id="btn-back-portal" class="back-portal-link">← ポータルへ</a>
+    </div>
+
+    <!-- 連勝ランキングパネル -->
+    <div class="leaderboard-panel">
+      <div class="leaderboard-header">
+        <span class="leaderboard-title">🏆 連勝ランキング (<span id="ranking-level-name">初級</span>)</span>
+        <button type="button" class="btn-refresh" id="btn-refresh-ranking" title="ランキングを更新">↻ 更新</button>
+      </div>
+      <table class="leaderboard-table">
+        <thead>
+          <tr>
+            <th style="width: 50px;">順位</th>
+            <th>プレイヤー</th>
+            <th style="text-align: right; width: 80px;">連勝数</th>
+          </tr>
+        </thead>
+        <tbody id="ranking-tbody">
+          <tr>
+            <td colspan="3" class="loading-cell">読み込み中...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <script src="script.js"></script>
