@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>じらいげん</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="game-panel">
+    <!-- アプリヘッダー -->
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-badge">◆</span>
+        <span class="brand-title">じらいげん</span>
+      </div>
+      <div class="difficulty-tabs">
+        <button type="button" class="tab-btn active" data-difficulty="beginner">初級</button>
+        <button type="button" class="tab-btn" data-difficulty="intermediate">中級</button>
+        <button type="button" class="tab-btn" data-difficulty="expert">上級</button>
+      </div>
+    </header>
+
+    <!-- 連勝ステータスバー -->
+    <div class="streak-bar">
+      <div class="streak-group">
+        <span class="streak-label">現在連勝</span>
+        <span class="streak-value" id="current-streak">0</span>
+      </div>
+      <div class="streak-group">
+        <span class="streak-label">最高連勝</span>
+        <span class="streak-value" id="best-streak">0</span>
+      </div>
+      <button type="button" class="streak-reset-btn" id="btn-reset-streak" title="連勝記録をリセット">リセット</button>
+    </div>
+
+    <!-- ゲーム操作ヘッダー -->
+    <div class="status-header">
+      <div class="counter-box">
+        <span class="counter-label">REMAIN</span>
+        <span class="counter-value" id="mine-count">010</span>
+      </div>
+
+      <button type="button" class="status-button" id="face-btn" aria-label="ゲーム状態・リセット">
+        <span class="status-dot"></span>
+        <span class="status-text" id="status-text">READY</span>
+      </button>
+
+      <div class="counter-box">
+        <span class="counter-label">TIME</span>
+        <span class="counter-value" id="timer">000</span>
+      </div>
+    </div>
+
+    <!-- 盤面エリア -->
+    <div class="board-wrapper">
+      <div class="board" id="board"></div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
